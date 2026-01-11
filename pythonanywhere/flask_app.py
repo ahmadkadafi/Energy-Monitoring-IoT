@@ -10,10 +10,10 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 # DATABASE CONFIG
 # ============================
 db_config = {
-    'user': 'AhmadKadafiHS',
-    'password': 'Bilal2018!',
-    'host': 'AhmadKadafiHS.mysql.pythonanywhere-services.com',
-    'database': 'AhmadKadafiHS$db_monitoring'
+    'user': 'your_username',
+    'password': 'your_password',
+    'host': 'your_database_host',
+    'database': 'your_database_name'
 }
 
 def get_db():

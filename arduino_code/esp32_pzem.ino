@@ -5,15 +5,15 @@
 #include <ESP32Time.h>
 
 /* ================= WIFI ================= */
-const char* ssid = "TheSpot4G";
-const char* pass = "Bilal2018";
+const char* ssid = "Your_SSID";
+const char* pass = "Your_PASSWORD";
 
 /* ================= DEVICE ================= */
 const char* device_name = "PZEM_01";
 
 /* ================= API ================= */
-const char* api_post = "https://ahmadkadafihs.pythonanywhere.com/api/post/data";
-const char* api_time = "https://ahmadkadafihs.pythonanywhere.com/api/time";
+const char* api_post = "your_api_endpoint_here";
+const char* api_time = "your_time_api_endpoint_here";
 
 /* ================= PZEM ================= */
 #define PZEM_RX 16
