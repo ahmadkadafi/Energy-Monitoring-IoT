@@ -47,6 +47,11 @@
 {% include "layout/footer.html" %}
 
 <script>
+// ================= AUTO REFRESH =================
+setInterval(() => {
+    location.reload();
+}, 120000);
+
 // ================= TIME =================
 function updateNowTime() {
     document.getElementById("nowTime").innerText = new Date().toLocaleString();
