@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Report</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+{% include "layout/sidebar.html" %}
+
+<div class="content">
+
+<h3 class="page-title">Energy Report</h3>
+<p class="page-subtitle">Harian, Mingguan, Bulanan & Event Analysis</p>
+
+<!-- ================= STAT ================= -->
+<div class="card p-3 mb-4">
+    <h5 class="mb-3">
+        <i class="fas fa-chart-bar me-2 h5"></i>Statistik Energi
+    </h5>
+    <div id="statCards"></div>
+</div>
+
+<!-- ================= EVENT ================= -->
+<div class="card p-3">
+    <h5>Warning & Alarm Event</h5>
+
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th class="text-center">No</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Time</th>
+                <th class="text-center">Voltage</th>
+                <th class="text-center">PF</th>
+                <th class="text-center">Event</th>
+            </tr>
+        </thead>
+        <tbody id="eventBody"></tbody>
+    </table>
+
+    <nav>
+        <ul class="pagination justify-content-center" id="eventPagination"></ul>
+    </nav>
+</div>
+
+</div>
+
+{% include "layout/footer.html" %}
+
+<script>
+const icons = {
+    voltage: "fas fa-bolt text-warning",
+    current: "fas fa-wave-square text-success",
+    power: "fas fa-plug text-danger",
+    energy: "fas fa-battery-full text-info",
+    frequency: "fas fa-sync text-primary",
+    pf: "fas fa-percent text-secondary"
+};
+
+const units = {
+    voltage: "V",
+    current: "A",
+    power: "W",
+    energy: "kWh",
+    frequency: "Hz",
+    pf: ""
+};
+
+/* ================= DAILY STAT ONLY ================= */
+fetch("/api/report/stats/{{ device }}")
+.then(res => res.json())
+.then(data => {
+    const d = data.daily;   // 🔥 HANYA DAILY
+    if (!d) return;
+
+    const html = `
+        <h6 class="mt-3 text-uppercase">Daily</h6>
+        <div class="row g-3">
+            ${makeCard("voltage","Voltage",d.v_avg,d.v_max,d.v_min)}
+            ${makeCard("current","Current",d.c_avg,d.c_max,d.c_min)}
+            ${makeCard("power","Power",d.p_avg,d.p_max,d.p_min)}
+            ${makeCard("energy","Energy",d.e_avg,d.e_max,d.e_min)}
+            ${makeCard("frequency","Frequency",d.f_avg,d.f_max,d.f_min)}
+            ${makeCard("pf","Power Factor",d.pf_avg,d.pf_max,d.pf_min)}
+        </div>
+    `;
+
+    document.getElementById("statCards").innerHTML = html;
+});
+
+function makeCard(key, label, avg, max, min) {
+    return `
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center p-3">
+                <i class="${icons[key]} fa-2x mb-2"></i>
+                <h6 class="mb-1">${label}</h6>
+                <div class="small text-muted">
+                    Avg : <b>${format(avg)} ${units[key]}</b><br>
+                    Max : ${format(max)} ${units[key]}<br>
+                    Min : ${format(min)} ${units[key]}
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+function format(val) {
+    return val !== null ? Number(val).toFixed(2) : "-";
+}
+</script>
+
+<script>
+/* ================= EVENT TABLE ================= */
+let eventPage = 1;
+const eventSize = 10;
+
+function loadEvent() {
+    fetch(`/api/report/event/{{ device }}?page=${eventPage}&size=${eventSize}`)
+    .then(res => res.json())
+    .then(res => {
+        const body = document.getElementById("eventBody");
+        body.innerHTML = "";
+
+        res.data.forEach((r, index) => {
+
+            const dt = new Date(r.created_at);
+            const date = dt.toISOString().slice(0, 10);   // YYYY-MM-DD
+            const time = dt.toTimeString().slice(0, 8);   // HH:MM:SS
+
+            const no = (eventPage - 1) * eventSize + index + 1;
+
+            body.innerHTML += `
+            <tr>
+                <td class="text-center">${no}</td>
+                <td class="text-center">${date}</td>
+                <td class="text-center">${time}</td>
+                <td class="text-center">${r.voltage ?? "-"}</td>
+                <td class="text-center">${r.pf ?? "-"}</td>
+                <td class="text-center">
+                    <span class="badge ${
+                        r.event_type.includes('Alarm')
+                        ? 'bg-danger'
+                        : 'bg-warning text-dark'
+                    }">
+                        ${r.event_type}
+                    </span>
+                </td>
+            </tr>
+            `;
+        });
+
+
+        renderEventPagination(res.total);
+    });
+}
+
+function renderEventPagination(total) {
+    const totalPages = Math.ceil(total / eventSize);
+    const pag = document.getElementById("eventPagination");
+    pag.innerHTML = "";
+
+    pag.innerHTML += `
+        <li class="page-item ${eventPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="eventPage--; loadEvent()">Prev</a>
+        </li>
+    `;
+
+    for (let i = 1; i <= totalPages && i <= 5; i++) {
+        pag.innerHTML += `
+        <li class="page-item ${i === eventPage ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="eventPage=${i}; loadEvent()">${i}</a>
+        </li>`;
+    }
+
+    pag.innerHTML += `
+        <li class="page-item ${eventPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="eventPage++; loadEvent()">Next</a>
+        </li>
+    `;
+}
+
+loadEvent();
+</script>
+
+
+</body>
+</html>

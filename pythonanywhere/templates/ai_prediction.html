@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Energy Prediction</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+{% include "layout/sidebar.html" %}
+
+<div class="content">
+
+    <!-- ================= PAGE TITLE ================= -->
+    <h3 class="page-title mb-2">
+        <i class="fas fa-brain me-2"></i>AI Energy Prediction
+    </h3>
+    <p class="page-subtitle mb-4">
+        Prediksi konsumsi energi listrik pada pukul <b>00:00</b>
+    </p>
+
+    <!-- ================= INFO ================= -->
+    <div class="card p-3 mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <span class="text-muted">Device</span><br>
+                <strong>{{ device }}</strong>
+            </div>
+            <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                <span class="text-muted">Model</span><br>
+                <strong>SARIMA (Time Series)</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PREDICTION TABLE ================= -->
+    <div class="card p-3">
+        <h5 class="mb-3">
+            <i class="fas fa-chart-line me-2"></i>Prediction Result
+        </h5>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Predicted (kWh)</th>
+                    <th>Actual (kWh)</th>
+                    <th>Difference</th>
+                </tr>
+                </thead>
+                <tbody id="predictionTable">
+                    <tr>
+                        <td colspan="2" class="text-center text-muted">
+                            Loading prediction data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% include "layout/footer.html" %}
+
+<!-- ================= SCRIPT ================= -->
+<script>
+fetch("/api/predict/evaluation/{{ device }}")
+.then(res => res.json())
+.then(data => {
+    const tbody = document.getElementById("predictionTable");
+    tbody.innerHTML = "";
+
+    if (!data.length) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    Data evaluasi belum tersedia
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    data.forEach(row => {
+        const cls = Math.abs(row.error) > 0.05 ? "text-danger" : "text-success";
+        tbody.innerHTML += `
+            <tr>
+                <td>${row.date}</td>
+                <td>${row.predicted}</td>
+                <td>${row.actual}</td>
+                <td class="${cls} fw-semibold">
+                    ${row.error}
+                </td>
+            </tr>
+        `;
+    });
+});
+</script>
+
+</body>
+</html>

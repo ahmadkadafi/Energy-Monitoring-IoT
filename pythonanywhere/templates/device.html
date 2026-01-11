@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Devices</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+#map {
+    height: 380px;
+    border-radius: 12px;
+}
+</style>
+
+</head>
+<body>
+
+{% include "layout/sidebar.html" %}
+
+<div class="content">
+
+    <h3 class="page-title mb-2">
+        <i class="fas fa-microchip me-2"></i>Device Information
+    </h3>
+    <p class="page-subtitle mb-4">
+        Lokasi perangkat dan detail sensor monitoring energi
+    </p>
+
+    <!-- ================= MAP ================= -->
+    <div class="card p-3 mb-4">
+        <h6 class="mb-2">
+            <i class="fas fa-map-marker-alt me-2 text-danger"></i>Device Location
+        </h6>
+        <div id="map"></div>
+    </div>
+
+    <!-- ================= DEVICE DETAIL ================= -->
+    <div class="card p-3">
+        <h6 class="mb-3">
+            <i class="fas fa-table me-2"></i>Sensor Detail
+        </h6>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th width="30%">Device Name</th>
+                        <td>PZEM_01</td>
+                    </tr>
+                    <tr>
+                        <th>Sensor Type</th>
+                        <td>PZEM-004T</td>
+                    </tr>
+                    <tr>
+                        <th>Measured Parameters</th>
+                        <td>
+                            Voltage (V), Current (A), Power (W), Energy (kWh), Frequency (Hz), Power Factor
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Voltage Range</th>
+                        <td>80 – 260 VAC</td>
+                    </tr>
+                    <tr>
+                        <th>Current Range</th>
+                        <td>0 – 100 A (CT)</td>
+                    </tr>
+                    <tr>
+                        <th>Communication</th>
+                        <td>UART (TTL) / Modbus-like protocol</td>
+                    </tr>
+                    <tr>
+                        <th>Supply Voltage</th>
+                        <td>5 V DC</td>
+                    </tr>
+                    <tr>
+                        <th>Installation Location</th>
+                        <td>
+                            Jl. Babakan Dese No. 1C,
+                            Kel. Kebonwaru, Kec. Batununggal, Bandung
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge bg-success">Online</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% include "layout/footer.html" %}
+
+<script>
+/* ================= LEAFLET MAP ================= */
+const map = L.map('map').setView([-6.94017, 107.63394], 16);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+L.marker([-6.921443, 107.64164])
+    .addTo(map)
+    .bindPopup(`
+        <b>PZEM_01</b><br>
+        Jl. Babakan Dese No. 1C<br>
+        Kebonwaru, Batununggal<br>
+        Bandung
+    `)
+    .openPopup();
+</script>
+
+</body>
+</html>

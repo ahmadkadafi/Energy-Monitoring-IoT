@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Information</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+
+{% include "layout/sidebar.html" %}
+
+<div class="content">
+
+    <h3 class="page-title mb-2">
+        <i class="fas fa-circle-info me-2"></i>Information
+    </h3>
+    <p class="page-subtitle mb-4">
+        Informasi pengembang dan sistem IoT yang dirancang
+    </p>
+
+    <!-- ================= IDENTITAS ================= -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3">
+            <i class="fas fa-user-graduate me-2"></i>Identitas Pengembang
+        </h5>
+
+        <table class="table table-borderless w-75">
+            <tr>
+                <th width="30%">Nama</th>
+                <td>: Ahmad Kadafi HS</td>
+            </tr>
+            <tr>
+                <th>NIM</th>
+                <td>: 201012420001</td>
+            </tr>
+            <tr>
+                <th>Program Studi</th>
+                <td>: Magister Teknik Elektro</td>
+            </tr>
+            <tr>
+                <th>Institusi</th>
+                <td>: Telkom University</td>
+            </tr>
+            <tr>
+                <th>Kegiatan</th>
+                <td>: Tugas Besar IoT Sistem Cerdas</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ================= SISTEM YANG DIRANCANG ================= -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3">
+            <i class="fas fa-microchip me-2"></i>Deskripsi Sistem IoT
+        </h5>
+
+        <p style="text-align: justify;">
+            Sistem yang dirancang ini, merupakan sistem monitoring energi listrik berbasis Internet of Things (IoT)
+            yang berfungsi untuk memantau parameter kelistrikan secara real-time dan historis.
+            Sistem ini dikembangkan sebagai bagian dari Tugas Besar mata kuliah IoT Sistem Cerdas
+            pada program Magister Teknik Elektro, Telkom University.
+            Data kelistrikan diukur menggunakan sensor PZEM-004T, kemudian diproses oleh mikrokontroler
+            dan dikirimkan ke server melalui jaringan internet. Data yang dikirim meliputi tegangan,
+            arus, daya, energi, frekuensi, dan faktor daya. Seluruh data disimpan dalam basis data
+            dan divisualisasikan melalui web dashboard berbasis Flask.
+        </p>
+    </div>
+
+    <!-- ================= DETAIL ALAT ================= -->
+    <div class="card p-4">
+        <h5 class="mb-3">
+            <i class="fas fa-cogs me-2"></i>Perangkat & Teknologi
+        </h5>
+
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th width="30%">Komponen</th>
+                    <th>Spesifikasi / Fungsi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sensor Energi</td>
+                    <td>PZEM-004T (Voltage, Current, Power, Energy, Frequency, Power Factor)</td>
+                </tr>
+                <tr>
+                    <td>Mikrokontroler</td>
+                    <td>ESP32 / NodeMCU (IoT communication)</td>
+                </tr>
+                <tr>
+                    <td>Protokol Komunikasi</td>
+                    <td>UART (sensor) & HTTP REST API</td>
+                </tr>
+                <tr>
+                    <td>Backend</td>
+                    <td>Python Flask</td>
+                </tr>
+                <tr>
+                    <td>Database</td>
+                    <td>MySQL (PythonAnywhere)</td>
+                </tr>
+                <tr>
+                    <td>Frontend</td>
+                    <td>HTML5, Bootstrap 5, JavaScript, Chart.js</td>
+                </tr>
+                <tr>
+                    <td>Fitur Sistem</td>
+                    <td>
+                        Monitoring real-time, grafik historis, log data, filter,
+                        export data, dan visualisasi lokasi perangkat
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% include "layout/footer.html" %}
+
+</body>
+</html>
